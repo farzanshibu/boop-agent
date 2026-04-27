@@ -25,7 +25,7 @@ export async function processInboundMessage(msg: NormalizedInbound): Promise<voi
     content: msg.content,
     from: msg.from,
     platform: msg.platform,
-    handle: msg.messageId,
+    messageId: msg.messageId,
   });
 
   const provider = getProviderForConversation(msg.conversationId);
