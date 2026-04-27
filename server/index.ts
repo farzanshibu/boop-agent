@@ -4,7 +4,11 @@ import cors from "cors";
 import { createServer } from "node:http";
 import { WebSocketServer } from "ws";
 import { addClient } from "./broadcast.js";
-import { createSendblueRouter } from "./sendblue.js";
+import {
+  registerProvider,
+  processInboundMessage,
+  sendblueProvider,
+} from "./communication/index.js";
 import { handleUserMessage } from "./interaction-agent.js";
 import { loadIntegrations } from "./integrations/registry.js";
 import { startCleanupLoop } from "./memory/clean.js";
@@ -21,6 +25,10 @@ async function main() {
   startHeartbeatLoop();
   startConsolidationLoop();
 
+  // Register platform adapters.
+  // To add a new channel: implement CommunicationProvider, then registerProvider + app.use here.
+  registerProvider(sendblueProvider);
+
   const app = express();
   app.use(cors());
   app.use(express.json({ limit: "2mb" }));
@@ -29,7 +37,7 @@ async function main() {
     res.json({ ok: true, service: "boop-agent" });
   });
 
-  app.use("/sendblue", createSendblueRouter());
+  app.use("/sendblue", sendblueProvider.createRouter(processInboundMessage));
   app.use("/composio", createComposioRouter());
 
   app.post("/agents/:id/cancel", (req, res) => {
