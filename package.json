@@ -27,6 +27,7 @@
     "@hugeicons/core-free-icons": "^1.0.0",
     "@hugeicons/react": "^1.0.0",
     "@modelcontextprotocol/sdk": "^1.0.0",
+    "ai": "^6.0.168",
     "convex": "^1.17.0",
     "cors": "^2.8.5",
     "croner": "^9.0.0",

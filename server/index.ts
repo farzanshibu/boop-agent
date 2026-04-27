@@ -8,6 +8,7 @@ import {
   registerProvider,
   processInboundMessage,
   sendblueProvider,
+  vercelChatProvider,
 } from "./communication/index.js";
 import { handleUserMessage } from "./interaction-agent.js";
 import { loadIntegrations } from "./integrations/registry.js";
@@ -28,6 +29,7 @@ async function main() {
   // Register platform adapters.
   // To add a new channel: implement CommunicationProvider, then registerProvider + app.use here.
   registerProvider(sendblueProvider);
+  registerProvider(vercelChatProvider);
 
   const app = express();
   app.use(cors());
@@ -38,6 +40,7 @@ async function main() {
   });
 
   app.use("/sendblue", sendblueProvider.createRouter(processInboundMessage));
+  app.use("/api/chat", vercelChatProvider.createRouter(processInboundMessage));
   app.use("/composio", createComposioRouter());
 
   app.post("/agents/:id/cancel", (req, res) => {
@@ -96,6 +99,7 @@ async function main() {
     console.log(`  health      GET  http://localhost:${port}/health`);
     console.log(`  chat        POST http://localhost:${port}/chat`);
     console.log(`  sendblue    POST http://localhost:${port}/sendblue/webhook`);
+    console.log(`  vercel-chat POST http://localhost:${port}/api/chat  (useChat compatible)`);
     console.log(`  websocket   WS   ws://localhost:${port}/ws`);
   });
 }
