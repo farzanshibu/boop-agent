@@ -29,6 +29,10 @@ export const vercelChatProvider: CommunicationProvider = {
   conversationPrefix: "web",
 
   createRouter(
+    // Web chat replies are streamed inline in the HTTP response, so the
+    // standard async `onMessage` / `processInboundMessage` flow is not used
+    // here.  The handler calls `handleUserMessage` directly and pipes the
+    // result back to the same HTTP connection via the Vercel AI SDK stream.
     _onMessage: (msg: NormalizedInbound) => Promise<void>,
   ): express.Router {
     const router = express.Router();

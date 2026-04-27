@@ -29,9 +29,7 @@ export async function processInboundMessage(msg: NormalizedInbound): Promise<voi
   });
 
   const provider = getProviderForConversation(msg.conversationId);
-  const stopTyping = provider?.startTypingLoop
-    ? provider.startTypingLoop(msg.from)
-    : () => {};
+  const stopTyping = provider?.startTypingLoop?.(msg.from) ?? (() => {});
 
   try {
     const reply = await handleUserMessage({
